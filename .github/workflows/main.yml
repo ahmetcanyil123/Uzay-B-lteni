@@ -1,0 +1,49 @@
+name: Build Android APK
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Build APK with Gradle
+        run: |
+          gradle wrapper --gradle-version 8.5
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+      - name: Prepare APK for Release
+        run: |
+          mkdir -p release-apk
+          cp app/build/outputs/apk/debug/*.apk release-apk/BilimTeknolojiBulteni.apk
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BilimTeknolojiBulteni-APK
+          path: release-apk/BilimTeknolojiBulteni.apk
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+        with:
+          files: release-apk/BilimTeknolojiBulteni.apk
+          tag_name: v1.0.0
+          name: "🚀 Bilim ve Teknoloji Bülteni APK (v1.0)"
+          body: |
+            ## 📱 Bilim ve Teknoloji Bülteni (Android APK)
+            Bu APK dosyasını doğrudan Android telefonunuza indirip kurabilirsiniz!
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
