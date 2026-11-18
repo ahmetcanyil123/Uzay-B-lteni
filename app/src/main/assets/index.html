@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Bilim & Teknoloji Bülteni</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo-area">
+          <span class="logo-icon">🚀</span>
+          <div>
+            <h1>Bilim &amp; Teknoloji</h1>
+            <p class="subtitle">Yapay Zeka • Uzay • İnovasyon • Bilim</p>
+          </div>
+        </div>
+        <button id="settingsBtn" class="icon-btn" title="Ayarlar">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+      <!-- Status Card / Action Bar -->
+      <div class="action-card">
+        <div class="date-badge" id="dateBadge">🗓️ Güncel Dönem Taraması</div>
+        <p class="action-desc">NASA, SpaceX, Evrim Ağacı, TÜBİTAK Bilim Genç ve yapay zeka/teknoloji kaynaklarını canlı tarar.</p>
+        <button id="generateBtn" class="primary-btn">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">Bülteni Oluştur / Canlı Tara</span>
+        </button>
+        <div id="loader" class="loader-box hidden">
+          <div class="spinner"></div>
+          <span id="loaderText">Kaynaklar canlı taranıyor...</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Floating Bar -->
+      <div id="quickActions" class="quick-actions hidden">
+        <button id="shareBtn" class="action-pill">
+          <span>📤</span> Paylaş
+        </button>
+        <button id="copyBtn" class="action-pill">
+          <span>📋</span> Kopyala
+        </button>
+      </div>
+
+      <!-- Bulletin Content Area -->
+      <div id="reportContainer" class="report-container">
+        <!-- Default Welcome State -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">🪐</div>
+          <h3>Bülten Bekleniyor</h3>
+          <p>Yukarıdaki <strong>"Bülteni Oluştur"</strong> butonuna dokunarak son günlerin en önemli bilim, teknoloji ve uzay gelişmelerini hemen listeleyebilirsiniz.</p>
+        </div>
+        <!-- Rendered Report Goes Here -->
+        <div id="markdownBody" class="markdown-body"></div>
+      </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>⚙️ Uygulama Ayarları</h3>
+          <button id="closeModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <label for="apiKeyInput">Gemini API Anahtarı:</label>
+          <input type="password" id="apiKeyInput" placeholder="AIzaSy... veya AQ....">
+          <small class="helper-text">API anahtarınız sadece cihazınızda güvenle saklanır.</small>
+          
+          <label for="modelSelect" style="margin-top: 14px;">Model:</label>
+          <select id="modelSelect">
+            <option value="gemini-flash-latest" selected>gemini-flash-latest (Önerilen - Hızlı)</option>
+            <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button id="saveSettingsBtn" class="primary-btn">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
