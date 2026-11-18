@@ -19,15 +19,27 @@ jobs:
           distribution: 'temurin'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Build APK with Gradle
         run: |
-          gradle wrapper --gradle-version 8.5
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          # settings.gradle nerede olursa olsun otomatik bulur
+          if [ -f "settings.gradle" ]; then
+            BUILD_DIR="."
+          elif [ -f "bilim_teknoloji_apk/settings.gradle" ]; then
+            BUILD_DIR="bilim_teknoloji_apk"
+          else
+            BUILD_DIR=$(find . -name "settings.gradle" -exec dirname {} \; | head -n 1)
+          fi
+          echo "Bulunan derleme dizini: $BUILD_DIR"
+          cd "$BUILD_DIR"
+          gradle assembleDebug --stacktrace
       - name: Prepare APK for Release
         run: |
           mkdir -p release-apk
-          cp app/build/outputs/apk/debug/*.apk release-apk/BilimTeknolojiBulteni.apk
+          APK_PATH=$(find . -name "*debug.apk" | head -n 1)
+          echo "Bulunan APK: $APK_PATH"
+          cp "$APK_PATH" release-apk/BilimTeknolojiBulteni.apk
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
