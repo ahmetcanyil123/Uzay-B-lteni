@@ -17,13 +17,18 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.5'
       - name: Build APK with Gradle
         run: |
-          # settings.gradle nerede olursa olsun otomatik bulur
+          # Eğer zip yüklendiyse otomatik aç
+          if ls *.zip 1> /dev/null 2>&1; then
+            echo "Zip açılıyor..."
+            unzip -o *.zip
+          fi
+          # Proje dizinini bul
           if [ -f "settings.gradle" ]; then
             BUILD_DIR="."
           elif [ -f "bilim_teknoloji_apk/settings.gradle" ]; then
@@ -31,8 +36,10 @@ jobs:
           else
             BUILD_DIR=$(find . -name "settings.gradle" -exec dirname {} \; | head -n 1)
           fi
-          echo "Bulunan derleme dizini: $BUILD_DIR"
+          echo "Derleme klasörü: $BUILD_DIR"
           cd "$BUILD_DIR"
+          # Android SDK lisanslarını onayla ve APK'yı derle
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           gradle assembleDebug --stacktrace
       - name: Prepare APK for Release
         run: |
